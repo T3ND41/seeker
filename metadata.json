@@ -1,0 +1,13 @@
+{
+  "name": "ScreenSense AI - Real-Time Screen Reader & Accessibility Navigator",
+  "description": "Real-time AI-powered screen reader, visual accessibility assistant, and step-by-step task navigation guide with voice narration and visual HUD overlays.",
+  "requestFramePermissions": [
+    "display-capture",
+    "microphone",
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
+

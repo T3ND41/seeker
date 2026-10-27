@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function() {
+        // Prevent Firefox/Chrome extension scripts and Vite HMR websocket disconnects from triggering unhandled errors
+        function isIgnorableError(msg, source) {
+          var str = ((msg || '') + ' ' + (source || '')).toLowerCase();
+          return (
+            str.indexOf('moz-extension://') !== -1 ||
+            str.indexOf('chrome-extension://') !== -1 ||
+            str.indexOf('inspector.js') !== -1 ||
+            str.indexOf('script error.') !== -1 ||
+            str.indexOf('createwebsocketmodulerunnertransport') !== -1 ||
+            str.indexOf('@vite/client') !== -1 ||
+            str.indexOf('websocket') !== -1
+          );
+        }
+
+        window.onerror = function(message, source, lineno, colno, error) {
+          if (isIgnorableError(message, source)) {
+            return true; // suppresses the error in browser
+          }
+          return false;
+        };
+
+        window.addEventListener('error', function(event) {
+          var msg = (event.message || '') + ' ' + (event.filename || '');
+          if (isIgnorableError(msg, event.filename)) {
+            event.stopImmediatePropagation();
+            event.preventDefault();
+          }
+        }, true);
+
+        window.addEventListener('unhandledrejection', function(event) {
+          var reason = event.reason ? (event.reason.message || event.reason.stack || String(event.reason)) : '';
+          if (isIgnorableError(reason, '')) {
+            event.stopImmediatePropagation();
+            event.preventDefault();
+          }
+        }, true);
+
+        // Filter console.error for ignorable extension / websocket errors
+        var origConsoleError = console.error;
+        console.error = function() {
+          var args = Array.prototype.slice.call(arguments);
+          var combined = args.map(function(a) {
+            return typeof a === 'object' && a !== null ? (a.message || a.stack || JSON.stringify(a)) : String(a);
+          }).join(' ');
+
+          if (isIgnorableError(combined, '')) {
+            return;
+          }
+          origConsoleError.apply(console, arguments);
+        };
+      })();
+    </script>
+    <title>ScreenSense AI - Real-Time Screen Reader & Accessibility Navigator</title>
+    <meta name="description" content="Real-time AI-powered screen reader, visual accessibility assistant, and step-by-step task navigation guide with voice narration and visual HUD overlays." />
+    <meta property="og:title" content="ScreenSense AI - Real-Time Screen Reader & Accessibility Navigator" />
+    <meta property="og:description" content="Real-time AI-powered screen reader, visual accessibility assistant, and step-by-step task navigation guide with voice narration and visual HUD overlays." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-slate-950 text-slate-100 antialiased selection:bg-amber-400 selection:text-slate-950">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
